@@ -1,14 +1,20 @@
 const { app } = require('../../config')
 const { UserService } = require('../../services')
+const userController = require('express').Router();
 
-app.post('/user', (req, res) => {
+userController.post('/user', (req, res) => {
 	console.log(UserService);
 
+	// const user = await UserService.create(req.body)
 	const user = UserService.create(req.body)
+	// res.send(user);
 	user.then(v => {
 		res.send(v);
 	})
 })
+
+module.exports = userController;
+
 
 //   app.get('/users', (req, res) => {
 //     const { id } = req.query;

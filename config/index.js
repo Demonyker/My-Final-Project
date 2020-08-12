@@ -5,7 +5,6 @@ const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: '/tmp/database.db'
 });
-
 const express = require('express');
 const app = express();
 
