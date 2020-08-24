@@ -6,6 +6,7 @@ module.exports = {
     await queryInterface.changeColumn('category', 'creatorId', {
       type: DataTypes.INTEGER,
       field: 'creatorId',
+      onDelete: 'CASCADE',
       references: {
         model: 'user',
         key: 'id',
