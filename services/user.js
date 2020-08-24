@@ -1,29 +1,37 @@
-const { User } = require('../models')
+const { User } = require('../models');
+const bcrypt = require('bcrypt');
 
 class UserService {
 
 	static async create(dto) {
 		const {
-			name,
+			firstName,
+			lastName,
 			birthDate,
 			email,
-			phone,
 			password,
 		} = dto;
 
+		const salt = await bcrypt.genSalt();
+
 		try {
 			const user = await User.create({
-				name,
+				firstName,
+				lastName,
 				birthDate,
 				email,
-				phone,
-				password
+				salt,
+				password: await this.hashPassword(password, salt)
 			})
 
 			return user;
 		} catch(e) {
 			return e;
 		}
+	}
+
+	static async hashPassword(password, salt) {
+		return await bcrypt.hash(password, salt);
 	}
 }
 

@@ -1,19 +1,29 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config');
 
-const User = sequelize.define('User', {
-  // Model attributes are defined here
+const User = sequelize.define('user', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
+  firstName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  lastName: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   birthDate: {
     type: DataTypes.DATE,
+    validate: {
+      isDate: true,
+    }
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   email: {
     type: DataTypes.STRING,
@@ -22,15 +32,22 @@ const User = sequelize.define('User', {
         isEmail: true,
     }
   },
-  phone: {
-    type: DataTypes.NUMBER,
+  salt: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  updatedAt: {
+    type: DataTypes.DATE,
+    allowNull: false,
   }
 }, {
     freezeTableName: true
-  // Other model options go here
 });
 
-User.sync();
 module.exports = {
     User
 }
