@@ -9,4 +9,12 @@ categoryController.get('/categories', isAuth, findUser, (req, res) => {
 	})
 })
 
+categoryController.post('/categories', isAuth, findUser, (req, res) => {
+	const category = CategoryService.add({...req.body, user: { ...req.user }})
+
+	category.then(v => {
+		res.send(v);
+	});
+});
+
 module.exports = categoryController;

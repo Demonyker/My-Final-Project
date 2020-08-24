@@ -14,9 +14,6 @@ const Category = sequelize.define('category', {
   creatorId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    validate: {
-      isEmail: true,
-    }
   },
   createdAt: {
     type: DataTypes.DATE,
