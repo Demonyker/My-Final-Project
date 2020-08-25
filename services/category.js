@@ -14,10 +14,6 @@ class CategoryService {
       }
       const categories = await Category.findAll();
 
-      if (!categories.length) {
-        throw new Error('No categories')
-      }
-
       return categories;
     } catch (e) {
       return e.message;
@@ -65,7 +61,9 @@ class CategoryService {
 
       await Category.destroy({ where: { id: categoryId }})
 
-      const results = await this.getAll();
+      const results = await this.getAll({
+        filters: {}
+      });
 
       return results;
     } catch (e) {
