@@ -72,6 +72,36 @@ class CategoryService {
       return e.message;
     }
   }
+
+  static async update(dto) {
+    const {
+      id,
+      newTitle,
+      user: { 
+        dataValues: { 
+          id: userId,
+        }, 
+      },
+    } = dto;
+
+    const currentCategory = await Category.findByPk(id);
+    try {
+      if (currentCategory.creatorId !== userId) {
+        throw new Error('You cant update this category')
+      }
+
+      await Category.update({ title: newTitle }, {
+        where: {
+          id
+        }
+      })
+
+      const newCategory = await Category.findByPk(id)
+      return newCategory;
+    } catch(e) {
+      return e.message;
+    }
+  }
 }
 
 module.exports = {

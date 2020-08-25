@@ -25,4 +25,12 @@ categoryController.delete('/categories', isAuth, findUser, (req, res) => {
 	});
 })
 
+categoryController.put('/categories', isAuth, findUser, (req, res) => {
+	const category = CategoryService.update({...req.body, user: { ...req.user }});
+
+	category.then(v => {
+		res.send(v);
+	});
+})
+
 module.exports = categoryController;
