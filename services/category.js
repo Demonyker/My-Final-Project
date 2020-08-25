@@ -1,9 +1,17 @@
 const { Category } = require('../models');
+const { sequelize } = require('../config');
 
 class CategoryService {
 
-	static async getAll() {
+	static async getAll(dto) {
     try {
+      const { filters } = dto;
+      const { title: searchString } = filters;
+
+      if (searchString) {
+        const [results] = await sequelize.query(`SELECT * FROM category WHERE title ILIKE '%${searchString}%';`)
+        return results;
+      }
       const categories = await Category.findAll();
 
       if (!categories.length) {
@@ -34,6 +42,33 @@ class CategoryService {
 
       return category;
     } catch(e) {
+      return e.message;
+    }
+  }
+
+  static async delete(dto) {
+    const { 
+      id: categoryId,
+      user: { 
+        dataValues: { 
+          id: userId,
+        }, 
+      },
+    } = dto;
+
+    const currentCategory = await Category.findByPk(categoryId);
+
+    try {
+      if (currentCategory.creatorId !== userId) {
+        throw new Error('You cant delete this category')
+      }
+
+      await Category.destroy({ where: { id: categoryId }})
+
+      const results = await this.getAll();
+
+      return results;
+    } catch (e) {
       return e.message;
     }
   }
