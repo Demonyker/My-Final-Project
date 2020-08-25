@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../config');
 
-const Note = sequelize.define('note', {
+const Category = sequelize.define('category', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,29 +11,9 @@ const Note = sequelize.define('note', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  description: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  categoryId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    field: 'categoryId',
-    onDelete: 'CASCADE',
-    references: {
-      model: 'category',
-      key: 'id',
-    }
-  },
   creatorId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: 'creatorId',
-    onDelete: 'CASCADE',
-    references: {
-      model: 'user',
-      key: 'id',
-    }
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -48,5 +28,5 @@ const Note = sequelize.define('note', {
 });
 
 module.exports = {
-  Note
+  Category
 }
