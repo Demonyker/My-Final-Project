@@ -1,5 +1,5 @@
 const { Note } = require('../models');
-const { sequelize } = require('../config');
+const { Sequelize } = require('sequelize');
 
 class NoteService {
 
@@ -13,13 +13,32 @@ class NoteService {
       };
 
       if (searchString) {
-        const [results] = await sequelize.query(`
-          SELECT * FROM note WHERE categoryId = '${categoryId}' 
-          AND title ILIKE '%${searchString}%'
-          OR description ILIKE '%${searchString}%';
-        `
-        );
-        return results;
+        const notes = await Note.findAll({
+          where: {
+            categoryId,
+            [Sequelize.Op.or]: [
+              {
+                title: {
+                  [Sequelize.Op.iLike]: `%${searchString}%`
+                },
+              },
+              {
+                description: {
+                  [Sequelize.Op.iLike]: `%${searchString}%`
+                },
+              },
+            ]
+          }
+        })
+
+        return notes;
+        // const [results] = await sequelize.query(`
+        //   SELECT * FROM note WHERE categoryId = '${categoryId}' 
+        //   AND title ILIKE '%${searchString}%'
+        //   OR description ILIKE '%${searchString}%';
+        // `
+        // );
+        // return results;
       };
       const notes = await Note.findAll({ where: { categoryId } });
 

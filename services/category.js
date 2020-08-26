@@ -1,5 +1,5 @@
 const { Category } = require('../models');
-const { sequelize } = require('../config');
+const { Sequelize } = require('sequelize');
 
 class CategoryService {
 
@@ -8,8 +8,14 @@ class CategoryService {
       const { searchString } = dto;
 
       if (searchString) {
-        const [results] = await sequelize.query(`SELECT * FROM category WHERE title ILIKE '%${searchString}%';`)
-        return results;
+        const categories = await Category.findAll({
+          where: {
+            title: {
+              [Sequelize.Op.iLike]: `%${searchString}%`,
+            },
+          }
+        })
+        return categories;
       }
       const categories = await Category.findAll();
 
