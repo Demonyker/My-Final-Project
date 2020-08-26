@@ -1,20 +1,8 @@
-const { AuthenticationService } = require('../../services')
-const authenticationController = require('express').Router();
+const { AuthenticationController } = require('../../controllers')
+const authenticationRoter = require('express').Router();
 
-authenticationController.post('/signUp', (req, res) => {
-  const user = AuthenticationService.signUp(req.body)
+authenticationRoter.post('/signUp', AuthenticationController.signUp);
 
-  user.then(v => {
-		res.send(v);
-	})
-})
+authenticationRoter.post('/signIn', AuthenticationController.signIn);
 
-authenticationController.post('/signIn', (req, res) => {
-  const user = AuthenticationService.signIn(req.body)
-
-  user.then(v => {
-		res.send(v);
-	})
-})
-
-module.exports = authenticationController;
+module.exports = authenticationRoter;

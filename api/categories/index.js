@@ -1,36 +1,13 @@
-const { CategoryService } = require('../../services')
-const categoryController = require('express').Router();
+const { CategoryController } = require('../../controllers')
+const categoryRouter = require('express').Router();
 const { isAuth, findUser } = require('../../helpers')
 
-categoryController.get('/categories', isAuth, findUser, (req, res) => {
-	const categories = CategoryService.getAll({filters: { ...req.query }, user: { ...req.user }})
-	categories.then(v => {
-		res.send(v);
-	})
-})
+categoryRouter.get('/categories', isAuth, findUser, CategoryController.getAll)
 
-categoryController.post('/categories', isAuth, findUser, (req, res) => {
-	const category = CategoryService.add({...req.body, user: { ...req.user }})
+categoryRouter.post('/categories', isAuth, findUser, CategoryController.add);
 
-	category.then(v => {
-		res.send(v);
-	});
-});
+categoryRouter.delete('/categories', isAuth, findUser, CategoryController.delete)
 
-categoryController.delete('/categories', isAuth, findUser, (req, res) => {
-	const categories = CategoryService.delete({...req.body, user: { ...req.user }})
+categoryRouter.put('/categories', isAuth, findUser, CategoryController.update)
 
-	categories.then(v => {
-		res.send(v);
-	});
-})
-
-categoryController.put('/categories', isAuth, findUser, (req, res) => {
-	const category = CategoryService.update({...req.body, user: { ...req.user }});
-
-	category.then(v => {
-		res.send(v);
-	});
-})
-
-module.exports = categoryController;
+module.exports = categoryRouter;

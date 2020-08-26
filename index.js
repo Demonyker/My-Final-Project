@@ -1,14 +1,12 @@
 const port = 3000;
 const { app } = require('./config')
 const { 
-  userController, 
-  authenticationController, 
-  categoryController,
-  noteController,
+  authenticationRoter, 
+  categoryRouter,
+  noteRouter,
 } = require('./api')
 
-app.use('/', userController);
-app.use('/', authenticationController);
-app.use('/', categoryController);
-app.use('/', noteController);
+app.use('/', authenticationRoter);
+app.use('/', categoryRouter);
+app.use('/', noteRouter);
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
