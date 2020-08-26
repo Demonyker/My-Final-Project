@@ -3,7 +3,7 @@ const { CategoryService } = require('../../services')
 class CategoryController {
 
 	static async getAll(req, res) {
-	  const categories = await CategoryService.getAll({filters: { ...req.query }, user: { ...req.user }});
+	  const categories = await CategoryService.getAll({...req.query, user: { ...req.user }});
     res.send(categories);
   }
   

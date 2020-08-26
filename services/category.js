@@ -5,8 +5,7 @@ class CategoryService {
 
 	static async getAll(dto) {
     try {
-      const { filters } = dto;
-      const { title: searchString } = filters;
+      const { searchString } = dto;
 
       if (searchString) {
         const [results] = await sequelize.query(`SELECT * FROM category WHERE title ILIKE '%${searchString}%';`)
