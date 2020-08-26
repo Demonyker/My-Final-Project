@@ -32,13 +32,6 @@ class NoteService {
         })
 
         return notes;
-        // const [results] = await sequelize.query(`
-        //   SELECT * FROM note WHERE categoryId = '${categoryId}' 
-        //   AND title ILIKE '%${searchString}%'
-        //   OR description ILIKE '%${searchString}%';
-        // `
-        // );
-        // return results;
       };
       const notes = await Note.findAll({ where: { categoryId } });
 

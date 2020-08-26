@@ -1,6 +1,7 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { BadRequest } = require('../helpers');
 
 class AuthenticationService {
 
@@ -41,11 +42,14 @@ class AuthenticationService {
       password,
     } = dto;
 
-    try {
       const { isValidatedPassword, user } = await this.validateUserPassword(email, password);
 
-      if (!isValidatedPassword) {
-        throw new Error('Wrong Password');
+      try {
+        if (!isValidatedPassword) {
+          throw new BadRequest('Invalid credentials')
+        }
+      } catch(e) {
+        return e;
       }
 
       const data = {
@@ -60,10 +64,6 @@ class AuthenticationService {
       const expiration = '6h';
 
       return jwt.sign({ data }, signature, { expiresIn: expiration });
-
-    } catch(e) {
-      return e.message;
-    }
   }
   
   static async validateUserPassword(email, password) {
