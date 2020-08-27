@@ -1,19 +1,16 @@
 const { AuthenticationService } = require('../../services')
+const { responseWrapper } = require('../../helpers');
 
 class AuthenticationController {
 
 	static async signUp(req, res, next) {
-    try {
-      const user = await AuthenticationService.signUp(req.body);
-      res.send(user);
-    } catch (e) {
-      next(e);
-    }
+    const user = await AuthenticationService.signUp(req.body, next);
+    responseWrapper(user, res, next);
   }
   
-  static async signIn(req, res) {
-    const user = await AuthenticationService.signIn(req.body);
-    res.send(user);
+  static async signIn(req, res, next) {
+    const result = await AuthenticationService.signIn(req.body, next);
+    responseWrapper(result, res, next);
   }
 }
 

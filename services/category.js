@@ -1,28 +1,28 @@
 const { Category } = require('../models');
 const { Sequelize } = require('sequelize');
+const { BadRequest } = require('../helpers');
+const { ERRORS_MESSAGES } = require('../enums');
+
+const { CANT_DELETE_CATEGORY, CANT_UPDATE_CATEGORY } = ERRORS_MESSAGES;
 
 class CategoryService {
 
 	static async getAll(dto) {
-    try {
-      const { searchString } = dto;
+    const { searchString } = dto;
 
-      if (searchString) {
-        const categories = await Category.findAll({
-          where: {
-            title: {
-              [Sequelize.Op.iLike]: `%${searchString}%`,
-            },
-          }
-        })
-        return categories;
-      }
-      const categories = await Category.findAll();
-
+    if (searchString) {
+      const categories = await Category.findAll({
+        where: {
+          title: {
+            [Sequelize.Op.iLike]: `%${searchString}%`,
+          },
+        }
+      })
       return categories;
-    } catch (e) {
-      return e.message;
     }
+    const categories = await Category.findAll();
+
+    return categories;
   }
 
   static async add(dto) {
@@ -43,7 +43,7 @@ class CategoryService {
 
       return category;
     } catch(e) {
-      return e.message;
+      return e;
     }
   }
 
@@ -56,23 +56,21 @@ class CategoryService {
         }, 
       },
     } = dto;
-
-    const currentCategory = await Category.findByPk(categoryId);
-
+    
     try {
+      const currentCategory = await Category.findByPk(categoryId);
+      
       if (currentCategory.creatorId !== userId) {
-        throw new Error('You cant delete this category')
+        throw new BadRequest(CANT_DELETE_CATEGORY)
       }
 
       await Category.destroy({ where: { id: categoryId }})
 
-      const results = await this.getAll({
-        filters: {}
-      });
+      const results = await this.getAll({});
 
       return results;
     } catch (e) {
-      return e.message;
+      return e;
     }
   }
 
@@ -90,7 +88,7 @@ class CategoryService {
     const currentCategory = await Category.findByPk(id);
     try {
       if (currentCategory.creatorId !== userId) {
-        throw new Error('You cant update this category')
+        throw new BadRequest(CANT_UPDATE_CATEGORY)
       }
 
       await Category.update({ title: newTitle }, {
@@ -102,7 +100,7 @@ class CategoryService {
       const newCategory = await Category.findByPk(id)
       return newCategory;
     } catch(e) {
-      return e.message;
+      return e;
     }
   }
 }
