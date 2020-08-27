@@ -7,20 +7,42 @@ const { CANT_DELETE_CATEGORY, CANT_UPDATE_CATEGORY } = ERRORS_MESSAGES;
 
 class CategoryService {
 
-	static async getAll(dto) {
-    const { searchString } = dto;
+  static async findCategories({ searchString, creatorId }) {
+    if (searchString && creatorId) {
+      return await Category.findAll({
+        where: {
+          title: {
+            [Sequelize.Op.iLike]: `%${searchString}%`,
+          },
+          creatorId,
+        }
+      })
+    }
 
     if (searchString) {
-      const categories = await Category.findAll({
+      return await Category.findAll({
         where: {
           title: {
             [Sequelize.Op.iLike]: `%${searchString}%`,
           },
         }
       })
-      return categories;
     }
-    const categories = await Category.findAll();
+
+    if (creatorId) {
+      return await Category.findAll({
+        where: {
+          creatorId,
+        }
+      })
+    }
+
+    return Category.findAll();
+  }
+
+	static async getAll(dto) {
+    
+    const categories = this.findCategories(dto);
 
     return categories;
   }

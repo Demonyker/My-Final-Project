@@ -2,6 +2,7 @@ const Joi = require('joi');
 
 const categoryFilterSchema = Joi.object({
   searchString: Joi.string().min(2).max(225),
+  creatorId: Joi.number().min(1),
 });
 
 const addCategorySchema = Joi.object({
