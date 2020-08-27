@@ -1,36 +1,20 @@
-const { CategoryService } = require('../../services')
-const categoryController = require('express').Router();
+const { CategoryController } = require('../../controllers')
+const categoryRouter = require('express').Router();
 const { isAuth, findUser } = require('../../helpers')
+const validator = require('express-joi-validation').createValidator({})
+const { 
+	categoryFilterSchema,
+  addCategorySchema,
+  deleteCategorySchema,
+  updateCategorySchema,
+} = require('../../validations');
 
-categoryController.get('/categories', isAuth, findUser, (req, res) => {
-	const categories = CategoryService.getAll({filters: { ...req.query }, user: { ...req.user }})
-	categories.then(v => {
-		res.send(v);
-	})
-})
+categoryRouter.get('/categories', isAuth, findUser, validator.query(categoryFilterSchema), CategoryController.getAll)
 
-categoryController.post('/categories', isAuth, findUser, (req, res) => {
-	const category = CategoryService.add({...req.body, user: { ...req.user }})
+categoryRouter.post('/categories', isAuth, findUser, validator.body(addCategorySchema), CategoryController.add);
 
-	category.then(v => {
-		res.send(v);
-	});
-});
+categoryRouter.delete('/categories', isAuth, findUser, validator.body(deleteCategorySchema), CategoryController.delete)
 
-categoryController.delete('/categories', isAuth, findUser, (req, res) => {
-	const categories = CategoryService.delete({...req.body, user: { ...req.user }})
+categoryRouter.put('/categories', isAuth, findUser, validator.body(updateCategorySchema), CategoryController.update)
 
-	categories.then(v => {
-		res.send(v);
-	});
-})
-
-categoryController.put('/categories', isAuth, findUser, (req, res) => {
-	const category = CategoryService.update({...req.body, user: { ...req.user }});
-
-	category.then(v => {
-		res.send(v);
-	});
-})
-
-module.exports = categoryController;
+module.exports = categoryRouter;

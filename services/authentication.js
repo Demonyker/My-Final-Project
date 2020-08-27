@@ -1,6 +1,10 @@
 const { User } = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { BadRequest } = require('../helpers');
+const { ERRORS_MESSAGES } = require('../enums');
+
+const { INVALID_CREDS } = ERRORS_MESSAGES;
 
 class AuthenticationService {
 
@@ -35,47 +39,50 @@ class AuthenticationService {
 		return await bcrypt.hash(password, salt);
   }
   
-  static async signIn(dto) {
+  static async signIn(dto, next) {
 		const {
       email,
       password,
     } = dto;
 
-    try {
       const { isValidatedPassword, user } = await this.validateUserPassword(email, password);
 
-      if (!isValidatedPassword) {
-        throw new Error('Wrong Password');
+      try {
+        if (!isValidatedPassword) {
+          throw new BadRequest(INVALID_CREDS)
+        }
+
+        const data = {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          birthDate: user.birthDate,
+        }
+  
+        const signature = 'MySuP3R_z3kr3t';
+        const expiration = '6h';
+  
+        return jwt.sign({ data }, signature, { expiresIn: expiration });
+      } catch(e) {
+        return e;
       }
-
-      const data = {
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        birthDate: user.birthDate,
-      }
-
-      const signature = 'MySuP3R_z3kr3t';
-      const expiration = '6h';
-
-      return jwt.sign({ data }, signature, { expiresIn: expiration });
-
-    } catch(e) {
-      return e.message;
-    }
   }
   
   static async validateUserPassword(email, password) {
-    const user = await User.findOne({ where: { email }})
-    if (!user) {
-      throw new Error('User Not Found')
+    try {
+      const user = await User.findOne({ where: { email }})
+      if (!user) {
+        throw new BadRequest(INVALID_CREDS)
+      }
+  
+      const hash = await bcrypt.hash(password, user.salt);
+      const isValidatedPassword = hash === user.password;
+  
+      return { isValidatedPassword, user };
+    } catch (e) {
+      return e;
     }
-
-    const hash = await bcrypt.hash(password, user.salt);
-    const isValidatedPassword = hash === user.password;
-
-    return { isValidatedPassword, user };
   }
 }
 

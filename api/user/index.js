@@ -1,11 +1,7 @@
-const { UserService } = require('../../services')
-const userController = require('express').Router();
+const { UserController } = require('../../controllers')
+const userRouter = require('express').Router();
+const { isAuth, findUser } = require('../../helpers')
 
-userController.post('/user', (req, res) => {
-	const user = UserService.create(req.body)
-	user.then(v => {
-		res.send(v);
-	})
-})
+userRouter.get('/user', isAuth, findUser, UserController.getPersonalInfo)
 
-module.exports = userController;
+module.exports = userRouter;

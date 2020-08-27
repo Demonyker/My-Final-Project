@@ -1,37 +1,27 @@
-const { User } = require('../models');
-const bcrypt = require('bcrypt');
+const { User, Category } = require('../models');
+const { sequelize } = require('../config');
+const { rebuildCategories } = require('../helpers');
 
 class UserService {
 
-	static async create(dto) {
-		const {
-			firstName,
-			lastName,
-			birthDate,
-			email,
-			password,
+	static async getPersonalInfo(dto) {
+		const { 
+      user: { 
+        dataValues: { 
+          id,
+        } 
+      }
 		} = dto;
 
-		const salt = await bcrypt.genSalt();
-
 		try {
-			const user = await User.create({
-				firstName,
-				lastName,
-				birthDate,
-				email,
-				salt,
-				password: await this.hashPassword(password, salt)
-			})
+			const user = User.findByPk(id);
+			const [result] = await sequelize.query(`select category.id as categoryId, category.title as categoryTitle, note.id as noteId, note.title as noteTitle, note.description as noteDescription from category left join note ON category.id = note."categoryId" where category."creatorId" = ${id}`)
 
-			return user;
+			const categories = rebuildCategories(result);
+			return categories;
 		} catch(e) {
 			return e;
 		}
-	}
-
-	static async hashPassword(password, salt) {
-		return await bcrypt.hash(password, salt);
 	}
 }
 

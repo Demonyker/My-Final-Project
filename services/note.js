@@ -1,32 +1,39 @@
 const { Note } = require('../models');
-const { sequelize } = require('../config');
+const { Sequelize } = require('sequelize');
+const { BadRequest } = require('../helpers');
+const { ERRORS_MESSAGES } = require('../enums');
+
+const { CANT_DELETE_NOTE, CANT_UPDATE_NOTE } = ERRORS_MESSAGES;
 
 class NoteService {
 
 	static async getNotesByCategory(dto) {
-    try {
-      const { filters } = dto;
-      const { searchString, categoryId } = filters;
+    const { searchString, categoryId } = dto;
 
-      if (!categoryId) {
-        throw new Error('No category id');
-      };
-
-      if (searchString) {
-        const [results] = await sequelize.query(`
-          SELECT * FROM note WHERE categoryId = '${categoryId}' 
-          AND title ILIKE '%${searchString}%'
-          OR description ILIKE '%${searchString}%';
-        `
-        );
-        return results;
-      };
-      const notes = await Note.findAll({ where: { categoryId } });
+    if (searchString) {
+      const notes = await Note.findAll({
+        where: {
+          categoryId,
+          [Sequelize.Op.or]: [
+            {
+              title: {
+                [Sequelize.Op.iLike]: `%${searchString}%`
+              },
+            },
+            {
+              description: {
+                [Sequelize.Op.iLike]: `%${searchString}%`
+              },
+            },
+          ]
+        }
+      })
 
       return notes;
-    } catch (e) {
-      return e.message;
-    }
+    };
+    const notes = await Note.findAll({ where: { categoryId } });
+
+    return notes;
   }
 
   static async add(dto) {
@@ -51,7 +58,7 @@ class NoteService {
 
       return note;
     } catch(e) {
-      return e.message;
+      return e;
     }
   }
 
@@ -66,24 +73,23 @@ class NoteService {
       },
     } = dto;
 
-    const currentNote = await Note.findByPk(noteId);
-
     try {
+      
+      const currentNote = await Note.findByPk(noteId);
+
       if (currentNote.creatorId !== userId) {
-        throw new Error('You cant delete this note')
+        throw new BadRequest(CANT_DELETE_NOTE)
       }
 
       await Note.destroy({ where: { id: noteId }})
 
       const results = await this.getNotesByCategory({
-        filters: {
-          categoryId,
-        }
+        categoryId,
       });
 
       return results;
     } catch (e) {
-      return e.message;
+      return e;
     }
   }
 
@@ -99,10 +105,12 @@ class NoteService {
       },
     } = dto;
 
-    const currentNote = await Note.findByPk(id);
     try {
+
+      const currentNote = await Note.findByPk(id);
+
       if (currentNote.creatorId !== userId) {
-        throw new Error('You cant update this note')
+        throw new BadRequest(CANT_UPDATE_NOTE)
       }
 
       await Note.update({ title: newTitle, description: newDescription }, {
@@ -114,7 +122,7 @@ class NoteService {
       const newNote = await Note.findByPk(id)
       return newNote;
     } catch(e) {
-      return e.message;
+      return e;
     }
   }
 }

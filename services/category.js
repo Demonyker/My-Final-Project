@@ -1,23 +1,50 @@
 const { Category } = require('../models');
-const { sequelize } = require('../config');
+const { Sequelize } = require('sequelize');
+const { BadRequest } = require('../helpers');
+const { ERRORS_MESSAGES } = require('../enums');
+
+const { CANT_DELETE_CATEGORY, CANT_UPDATE_CATEGORY } = ERRORS_MESSAGES;
 
 class CategoryService {
 
-	static async getAll(dto) {
-    try {
-      const { filters } = dto;
-      const { title: searchString } = filters;
-
-      if (searchString) {
-        const [results] = await sequelize.query(`SELECT * FROM category WHERE title ILIKE '%${searchString}%';`)
-        return results;
-      }
-      const categories = await Category.findAll();
-
-      return categories;
-    } catch (e) {
-      return e.message;
+  static async findCategories({ searchString, creatorId }) {
+    if (searchString && creatorId) {
+      return await Category.findAll({
+        where: {
+          title: {
+            [Sequelize.Op.iLike]: `%${searchString}%`,
+          },
+          creatorId,
+        }
+      })
     }
+
+    if (searchString) {
+      return await Category.findAll({
+        where: {
+          title: {
+            [Sequelize.Op.iLike]: `%${searchString}%`,
+          },
+        }
+      })
+    }
+
+    if (creatorId) {
+      return await Category.findAll({
+        where: {
+          creatorId,
+        }
+      })
+    }
+
+    return Category.findAll();
+  }
+
+	static async getAll(dto) {
+    
+    const categories = this.findCategories(dto);
+
+    return categories;
   }
 
   static async add(dto) {
@@ -38,7 +65,7 @@ class CategoryService {
 
       return category;
     } catch(e) {
-      return e.message;
+      return e;
     }
   }
 
@@ -51,23 +78,21 @@ class CategoryService {
         }, 
       },
     } = dto;
-
-    const currentCategory = await Category.findByPk(categoryId);
-
+    
     try {
+      const currentCategory = await Category.findByPk(categoryId);
+      
       if (currentCategory.creatorId !== userId) {
-        throw new Error('You cant delete this category')
+        throw new BadRequest(CANT_DELETE_CATEGORY)
       }
 
       await Category.destroy({ where: { id: categoryId }})
 
-      const results = await this.getAll({
-        filters: {}
-      });
+      const results = await this.getAll({});
 
       return results;
     } catch (e) {
-      return e.message;
+      return e;
     }
   }
 
@@ -85,7 +110,7 @@ class CategoryService {
     const currentCategory = await Category.findByPk(id);
     try {
       if (currentCategory.creatorId !== userId) {
-        throw new Error('You cant update this category')
+        throw new BadRequest(CANT_UPDATE_CATEGORY)
       }
 
       await Category.update({ title: newTitle }, {
@@ -97,7 +122,7 @@ class CategoryService {
       const newCategory = await Category.findByPk(id)
       return newCategory;
     } catch(e) {
-      return e.message;
+      return e;
     }
   }
 }

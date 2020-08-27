@@ -1,36 +1,20 @@
-const { NoteService } = require('../../services')
-const noteController = require('express').Router();
+const { NoteController } = require('../../controllers')
+const noteRouter = require('express').Router();
 const { isAuth, findUser } = require('../../helpers')
+const validator = require('express-joi-validation').createValidator({})
+const { 
+  noteFilterSchema,
+  addNoteSchema,
+  deleteNoteSchema,
+  updateNoteSchema,
+} = require('../../validations');
 
-noteController.get('/notes', isAuth, findUser, (req, res) => {
-	const notes = NoteService.getNotesByCategory({filters: { ...req.query }, user: { ...req.user }})
-	notes.then(v => {
-		res.send(v);
-	})
-})
+noteRouter.get('/notes', isAuth, findUser, validator.query(noteFilterSchema), NoteController.getNoteByCategory)
 
-noteController.post('/notes', isAuth, findUser, (req, res) => {
-	const note = NoteService.add({...req.body, user: { ...req.user }})
+noteRouter.post('/notes', isAuth, findUser, validator.body(addNoteSchema), NoteController.add);
 
-	note.then(v => {
-		res.send(v);
-	});
-});
+noteRouter.delete('/notes', isAuth, findUser, validator.body(deleteNoteSchema), NoteController.delete);
 
-noteController.delete('/notes', isAuth, findUser, (req, res) => {
-	const notes = NoteService.delete({...req.body, user: { ...req.user }})
+noteRouter.put('/notes', isAuth, findUser, validator.body(updateNoteSchema), NoteController.update);
 
-	notes.then(v => {
-		res.send(v);
-	});
-})
-
-noteController.put('/notes', isAuth, findUser, (req, res) => {
-	const note = NoteService.update({...req.body, user: { ...req.user }});
-
-	note.then(v => {
-		res.send(v);
-	});
-})
-
-module.exports = noteController;
+module.exports = noteRouter;
