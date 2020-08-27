@@ -1,22 +1,21 @@
 const rebuildCategories = (categories) => {
   const categoriesWithNote = categories.filter(item => item.noteid);
-  const categoriesWithoutNote = categories.filter(item => !item.noteid).map(item => ({ categoryid: item.categoryid, categorytitle: item.categorytitle, notes: [] }));
+  const categoriesWithoutNote = categories.filter(item => !item.noteid).map(item => ({ categoryId: item.categoryid, categoryTitle: item.categorytitle, notes: [] }));
 
   const result = categoriesWithNote.reduce((acc, item) => {
-    const existedObjectWithCategoryId = acc.categories.find(category => category.categoryid === item.categoryid);
+    const existedObjectWithCategoryId = acc.categories.find(category => category.categoryId === item.categoryid);
 
     if (existedObjectWithCategoryId) {
-      console.log(acc.categories)
       return {
         ...acc,
         categories: acc.categories.map(category => {
-          if(category.categoryid === existedObjectWithCategoryId.categoryid) {
+          if(category.categoryId === existedObjectWithCategoryId.categoryId) {
             return {
               ...category,
               notes: [...category.notes, {
-                noteid: item.noteid,
-                notetitle: item.notetitle,
-                notedescription: item.notedescription,
+                noteId: item.noteid,
+                noteTitle: item.notetitle,
+                noteDescription: item.notedescription,
               }]
             }
           }
@@ -30,12 +29,12 @@ const rebuildCategories = (categories) => {
     return {
       ...acc,
       categories: [...acc.categories, {
-        categoryid: item.categoryid,
-        categorytitle: item.categorytitle,
+        categoryId: item.categoryid,
+        categoryTitle: item.categorytitle,
         notes: [{
-          noteid: item.noteid,
-          notetitle: item.notetitle,
-          notedescription: item.notedescription,
+          noteId: item.noteid,
+          noteTitle: item.notetitle,
+          noteDescription: item.notedescription,
         }]
       }]
     }
@@ -43,7 +42,7 @@ const rebuildCategories = (categories) => {
     categories: [],
   })
 
-  return [...result, ...categoriesWithoutNote];
+  return [...result.categories, ...categoriesWithoutNote];
 }
 
 module.exports = {
