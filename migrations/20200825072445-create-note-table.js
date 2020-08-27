@@ -45,15 +45,10 @@ module.exports = {
         type: DataTypes.DATE,
         allowNull: false,
       }
-    })
+    });
   },
 
   down: async (queryInterface, Sequelize) => {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
+    await queryInterface.dropTable('note');
   }
 };
