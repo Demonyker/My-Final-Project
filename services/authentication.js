@@ -17,7 +17,6 @@ class AuthenticationService {
 			password,
 		} = dto;
 
-    console.log(dto);
 		const salt = await bcrypt.genSalt();
 
 		try {
@@ -32,7 +31,6 @@ class AuthenticationService {
 
 			return user;
 		} catch(e) {
-      console.log(e);
 			return e;
 		}
 	}
