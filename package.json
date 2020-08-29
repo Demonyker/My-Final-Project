@@ -7,7 +7,8 @@
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "migrate": "npx sequelize db:migrate",
-    "migrate-down": "npx sequelize db:migrate:undo"
+    "migrate-down": "npx sequelize db:migrate:undo",
+    "pretest": "eslint --ignore-path .gitignore ."
   },
   "author": "",
   "license": "ISC",
@@ -30,5 +31,9 @@
     "sequelize-cli": "^6.2.0",
     "sqlite": "^4.0.12",
     "sqlite3": "^5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-strongloop": "^2.1.0"
   }
 }

@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+node_modules/
 /.pnp
 .pnp.js
 
@@ -26,5 +27,3 @@ dist.tgz
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-
