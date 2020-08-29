@@ -4,8 +4,8 @@ const noteRouter = require('./note');
 const userRouter = require('./user');
 
 module.exports = {
-    authenticationRoter,
-    categoryRouter,
-    noteRouter,
-    userRouter,
-}
+  authenticationRoter,
+  categoryRouter,
+  noteRouter,
+  userRouter,
+};

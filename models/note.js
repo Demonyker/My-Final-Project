@@ -23,7 +23,7 @@ const Note = sequelize.define('note', {
     references: {
       model: 'category',
       key: 'id',
-    }
+    },
   },
   creatorId: {
     type: DataTypes.INTEGER,
@@ -33,7 +33,7 @@ const Note = sequelize.define('note', {
     references: {
       model: 'user',
       key: 'id',
-    }
+    },
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -42,11 +42,11 @@ const Note = sequelize.define('note', {
   updatedAt: {
     type: DataTypes.DATE,
     allowNull: false,
-  }
+  },
 }, {
-    freezeTableName: true
+  freezeTableName: true,
 });
 
 module.exports = {
-  Note
-}
+  Note,
+};

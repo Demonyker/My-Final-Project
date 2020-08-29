@@ -1,8 +1,7 @@
-'use strict';
 const { DataTypes } = require('sequelize');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.createTable('note', {
       id: {
         type: DataTypes.INTEGER,
@@ -25,7 +24,7 @@ module.exports = {
         references: {
           model: 'category',
           key: 'id',
-        }
+        },
       },
       creatorId: {
         type: DataTypes.INTEGER,
@@ -35,7 +34,7 @@ module.exports = {
         references: {
           model: 'user',
           key: 'id',
-        }
+        },
       },
       createdAt: {
         type: DataTypes.DATE,
@@ -44,11 +43,11 @@ module.exports = {
       updatedAt: {
         type: DataTypes.DATE,
         allowNull: false,
-      }
+      },
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('note');
-  }
+  },
 };

@@ -18,7 +18,7 @@ const updateCategorySchema = Joi.object({
   newTitle: Joi.string().required().min(2).max(50),
 });
 
-module.exports = { 
+module.exports = {
   categoryFilterSchema,
   addCategorySchema,
   deleteCategorySchema,

@@ -5,6 +5,6 @@ const ERRORS_MESSAGES = {
   CANT_UPDATE_CATEGORY: 'You cant update this category',
   CANT_DELETE_NOTE: 'You cant delete this note',
   CANT_UPDATE_NOTE: 'You cant update this note',
-}
+};
 
 module.exports = ERRORS_MESSAGES;

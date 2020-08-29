@@ -1,8 +1,7 @@
-'use strict';
 const { DataTypes } = require('sequelize');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.createTable('category', {
       id: {
         type: DataTypes.INTEGER,
@@ -24,11 +23,11 @@ module.exports = {
       updatedAt: {
         type: DataTypes.DATE,
         allowNull: false,
-      }
+      },
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.dropTable('category');
-  }
+  },
 };

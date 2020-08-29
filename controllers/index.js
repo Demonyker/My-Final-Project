@@ -8,4 +8,4 @@ module.exports = {
   CategoryController,
   NoteController,
   UserController,
-}
+};

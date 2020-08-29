@@ -1,10 +1,10 @@
 const isAuth = require('./isAuth');
 const { findUser } = require('./findUser');
 const handleErrors = require('./errorMiddleware');
-const { 
+const {
   GeneralError,
   BadRequest,
-  NotFound
+  NotFound,
 } = require('./errors');
 const responseWrapper = require('./responseWrapper');
 const { rebuildCategories } = require('./rebuilder');
@@ -20,4 +20,4 @@ module.exports = {
   NotFound,
   responseWrapper,
   rebuildCategories,
-}
+};

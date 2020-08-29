@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+// eslint-disable-next-line max-classes-per-file
 class GeneralError extends Error {
   constructor(message) {
     super();
@@ -20,5 +22,5 @@ class NotFound extends GeneralError { }
 module.exports = {
   GeneralError,
   BadRequest,
-  NotFound
+  NotFound,
 };

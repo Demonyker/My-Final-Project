@@ -3,7 +3,7 @@ const responseWrapper = (result, res, next) => {
     next(result);
   } else {
     res.send(result);
-  };
+  }
 };
 
 module.exports = responseWrapper;

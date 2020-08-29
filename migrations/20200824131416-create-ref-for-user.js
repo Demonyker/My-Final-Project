@@ -1,8 +1,7 @@
-'use strict';
 const { DataTypes } = require('sequelize');
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     await queryInterface.changeColumn('category', 'creatorId', {
       type: DataTypes.INTEGER,
       field: 'creatorId',
@@ -10,11 +9,11 @@ module.exports = {
       references: {
         model: 'user',
         key: 'id',
-      }
+      },
     });
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     await queryInterface.removeConstraint('category', 'category_creator_id');
-  }
+  },
 };

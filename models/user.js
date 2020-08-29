@@ -19,7 +19,7 @@ const User = sequelize.define('user', {
     type: DataTypes.DATE,
     validate: {
       isDate: true,
-    }
+    },
   },
   password: {
     type: DataTypes.STRING,
@@ -29,8 +29,8 @@ const User = sequelize.define('user', {
     type: DataTypes.STRING,
     allowNull: false,
     validate: {
-        isEmail: true,
-    }
+      isEmail: true,
+    },
   },
   salt: {
     type: DataTypes.STRING,
@@ -43,11 +43,11 @@ const User = sequelize.define('user', {
   updatedAt: {
     type: DataTypes.DATE,
     allowNull: false,
-  }
+  },
 }, {
-    freezeTableName: true
+  freezeTableName: true,
 });
 
 module.exports = {
-    User
-}
+  User,
+};

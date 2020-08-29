@@ -23,4 +23,4 @@ module.exports = {
   addNoteSchema,
   deleteNoteSchema,
   updateNoteSchema,
-}
+};

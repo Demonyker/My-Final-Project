@@ -22,11 +22,11 @@ const Category = sequelize.define('category', {
   updatedAt: {
     type: DataTypes.DATE,
     allowNull: false,
-  }
+  },
 }, {
-    freezeTableName: true
+  freezeTableName: true,
 });
 
 module.exports = {
-  Category
-}
+  Category,
+};
