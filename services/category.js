@@ -1,9 +1,16 @@
 const { Sequelize } = require('sequelize');
+const csv = require('csv-stream');
+const fs = require('fs');
+const through2 = require('through2');
 const { Category } = require('../models');
 const { BadRequest } = require('../helpers');
 const { ERRORS_MESSAGES } = require('../enums');
 
-const { CANT_DELETE_CATEGORY, CANT_UPDATE_CATEGORY } = ERRORS_MESSAGES;
+const {
+  CANT_DELETE_CATEGORY,
+  CANT_UPDATE_CATEGORY,
+  NO_FILES,
+} = ERRORS_MESSAGES;
 
 class CategoryService {
   static async findCategories({ searchString, creatorId }) {
@@ -128,6 +135,55 @@ class CategoryService {
     } catch (e) {
       return e;
     }
+  }
+
+  static async upload(dto) {
+    const {
+      file,
+      user: {
+        dataValues: {
+          id: creatorId,
+        },
+      },
+    } = dto;
+
+    if (!file) {
+      throw new BadRequest(NO_FILES);
+    }
+
+    const r = [];
+    fs.createReadStream(file.path)
+      .pipe(csv.createStream({
+        endLine: '\n',
+        columns: ['title'],
+        escapeChar: '"',
+        enclosedChar: '"',
+      }))
+      .pipe(through2({ objectMode: true }, (row, enc, cb) => {
+        // - `row` holds the first row of the CSV,
+        //   as: `{ Year: '1997', Make: 'Ford', Model: 'E350' }`
+        // - The stream won't process the *next* item unless you call the callback
+        //  `cb` on it.
+        // - This allows us to save the row in our database/microservice and when
+        //   we're done, we call `cb()` to move on to the *next* row.
+        Category.create({
+          title: row.title,
+          creatorId,
+        }).then(() => {
+          cb(null, true);
+        })
+          .catch((err) => {
+            cb(err, null);
+          });
+      }))
+      .on('data', (data) => {
+        r.push(data);
+      })
+      .on('end', () => {
+        console.log('end');
+      });
+
+    return 'uploaded';
   }
 }
 

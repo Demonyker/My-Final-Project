@@ -21,6 +21,14 @@ class CategoryController {
     const category = await CategoryService.update({ ...req.body, user: { ...req.user } });
     responseWrapper(category, res, next);
   }
+
+  static async upload(req, res, next) {
+    const asnwer = await CategoryService.upload({
+      file: req.file,
+      user: { ...req.user },
+    });
+    responseWrapper(asnwer, res, next);
+  }
 }
 
 module.exports = CategoryController;
